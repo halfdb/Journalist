@@ -8,15 +8,16 @@ namespace Journalist
 {
     public partial class MainWindow : Window
     {
-        private const int TIMEOUT = 1000;
-        private readonly string APP_NAME;
-        private bool cancelExit = true;
+        public string AppName { get; }
+        private const int ballonTimeout = 1000;
 
-        private NotifyIcon NotifyIcon = null;
+        private bool cancelExit = true;
+        private NotifyIcon notifyIcon = null;
+
         public MainWindow()
         {
             SetLanguageDictionary();
-            APP_NAME = TryResourceString("#AppName#");
+            AppName = TryResourceString("#AppName#");
             InitializeComponent();
             InitializeNotifyIcon();
         }
@@ -55,22 +56,22 @@ namespace Journalist
                 (object sender, EventArgs e) => { cancelExit = false; Close(); }
                 ));
 
-            NotifyIcon = new NotifyIcon
+            notifyIcon = new NotifyIcon
             {
-                Text = APP_NAME,
+                Text = AppName,
                 BalloonTipIcon = ToolTipIcon.Info,
-                BalloonTipTitle = APP_NAME,
+                BalloonTipTitle = AppName,
                 BalloonTipText = TryResourceString("#RunningBackground#"),
                 Icon = new System.Drawing.Icon(@".\Resources\Journalist.ico"),
                 ContextMenu = contextMenu,
                 Visible = true,
             };
-            NotifyIcon.Click += new EventHandler(NotifyIconClick);
+            notifyIcon.Click += new EventHandler(NotifyIconClick);
         }
 
         private void NotifyIconClick(object sender, EventArgs e)
         {
-            if (sender != NotifyIcon)
+            if (sender != notifyIcon)
             {
                 return;
             }
@@ -86,14 +87,14 @@ namespace Journalist
             {
                 e.Cancel = true;
                 Hide();
-                NotifyIcon.ShowBalloonTip(TIMEOUT);
+                notifyIcon.ShowBalloonTip(ballonTimeout);
             }
             base.OnClosing(e);
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            NotifyIcon.Visible = false;
+            notifyIcon.Visible = false;
             base.OnClosed(e);
         }
     }
