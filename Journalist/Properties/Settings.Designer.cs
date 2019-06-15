@@ -29,12 +29,12 @@ namespace Journalist.Properties {
             "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
             "tring>C/C++|*.c *.cpp *.h *.hpp</string>\r\n  <string>Python|*.py</string>\r\n</Arra" +
             "yOfString>")]
-        public global::System.Collections.Specialized.StringCollection PackNamedFilters {
+        public global::System.Collections.Specialized.StringCollection PackTitledFilters {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["PackNamedFilters"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["PackTitledFilters"]));
             }
             set {
-                this["PackNamedFilters"] = value;
+                this["PackTitledFilters"] = value;
             }
         }
         
@@ -42,13 +42,49 @@ namespace Journalist.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
             "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
-            "tring>.axf</string>\r\n</ArrayOfString>")]
+            "tring>*.axf</string>\r\n</ArrayOfString>")]
         public global::System.Collections.Specialized.StringCollection TargetFilters {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["TargetFilters"]));
             }
             set {
                 this["TargetFilters"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int PackFilterIndex {
+            get {
+                return ((int)(this["PackFilterIndex"]));
+            }
+            set {
+                this["PackFilterIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TargetFilterIndex {
+            get {
+                return ((int)(this["TargetFilterIndex"]));
+            }
+            set {
+                this["TargetFilterIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\")]
+        public string WatchingPath {
+            get {
+                return ((string)(this["WatchingPath"]));
+            }
+            set {
+                this["WatchingPath"] = value;
             }
         }
     }

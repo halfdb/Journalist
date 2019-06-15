@@ -6,5 +6,6 @@
     <system:String x:Key="#RunningBackground#">正在后台运行</system:String>
     <system:String x:Key="#ShowWindow#">显示窗口</system:String>
     <system:String x:Key="#Exit#">退出</system:String>
-    
+    <system:String x:Key="#FileFullTip#">上传文件过多。是否需要排除特定目录？</system:String>
+
 </ResourceDictionary>

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
@@ -10,10 +12,19 @@ namespace Journalist
     public partial class MainWindow : Window
     {
         public string AppName { get; }
-        private const int ballonTimeout = 1000;
+        protected const int ballonTimeout = 1000;
 
-        private bool cancelExit = true;
-        private NotifyIcon notifyIcon = null;
+        protected bool cancelExit = true;
+        protected NotifyIcon notifyIcon = null;
+
+        protected StringCollection packTitledFilters;
+        protected int packFilterIndex;
+        protected StringCollection targetFilters;
+        protected int targetFilterIndex;
+        protected string watchingPath;
+        private Packer packer;
+
+        private bool FullWarning { get => packer.PackFull; }
 
         public MainWindow()
         {
@@ -22,24 +33,15 @@ namespace Journalist
             InitializeComponent();
             InitializeNotifyIcon();
 
-            if (true)
+            packTitledFilters = Properties.Settings.Default.PackTitledFilters;
+            packFilterIndex = Properties.Settings.Default.PackFilterIndex;
+            targetFilters = Properties.Settings.Default.TargetFilters;
+            targetFilterIndex = Properties.Settings.Default.TargetFilterIndex;
+            watchingPath = Properties.Settings.Default.WatchingPath;
+
+            if (true)  // TODO Log in.
             {
-                Console.WriteLine(Directory.GetCurrentDirectory());
-                Packer packer = new Packer(new Packer.Config()
-                {
-                    Path = "./",
-                    PackFileNameFilters = new string[] {"*.txt"},
-                    TargetFileNameFilter = "*.target"
-                });
-                using (var f = File.CreateText(@".\g.target"))
-                {
-                    f.WriteLine("ewgw");
-                }
-                File.Delete(@".\g.target");
-                using (var f = File.CreateText(@".\g.target"))
-                {
-                    f.WriteLine("jins");
-                }
+                RestartWatching();
             }
         }
 
@@ -100,6 +102,43 @@ namespace Journalist
             {
                 Show();
             }
+        }
+
+        protected void RestartWatching()
+        {
+            var packFilters = packTitledFilters
+                [packFilterIndex]  // -> "title|filters"
+                .Split('|')  // -> ["title", "filters"]
+                [1]  // -> "filters"
+                .Split(' ');  // -> ["filter1", "filter2"...]
+            var config = new Packer.Config()
+            {
+                Path = watchingPath,
+                PackFileNameFilters = packFilters,
+                TargetFileNameFilter = targetFilters[targetFilterIndex],
+            };
+
+            packer = packer?.ChangeConfig(config) ?? new Packer(config);
+            packer.PackUpdateFinished += PackUpdateFinished;
+        }
+
+        private void PackUpdateFinished()
+        {
+            if (FullWarning)
+            {
+                notifyIcon.ShowBalloonTip(
+                    ballonTimeout,
+                    AppName,
+                    TryResourceString("#FileFullTip#"),
+                    ToolTipIcon.Warning
+                    );
+            }
+            string zipFileName = packer.Pack();
+            Console.WriteLine($"Info: {zipFileName} made");
+            // TODO upload
+#if !DEBUG
+            File.Delete(zipFileName);
+#endif
         }
 
         protected override void OnClosing(CancelEventArgs e)

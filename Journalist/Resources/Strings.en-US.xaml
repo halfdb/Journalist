@@ -6,5 +6,6 @@
     <system:String x:Key="#RunningBackground#">Running in the background</system:String>
     <system:String x:Key="#ShowWindow#">Show the window</system:String>
     <system:String x:Key="#Exit#">Exit</system:String>
+    <system:String x:Key="#FileFullTip#">Too many files to upload. Maybe exclude some certain paths?</system:String>
     
 </ResourceDictionary>

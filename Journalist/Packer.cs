@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+using System.Windows;
 
 namespace Journalist
 {
-    class Packer
+    class Packer : IDisposable
     {
         protected FileSystemWatcher watcher;
-        protected string Path;
+        protected string WatchingPath;
+        protected string targetFileNameFilter;
         protected IList<string> packFileNameFilters;
 
         private const int packItemLimit = 100;
@@ -19,6 +25,7 @@ namespace Journalist
         protected Thread updatingThread;
         public bool UpdatingPackFiles { get; protected set; }
         public event Action PackUpdateFinishing;
+        public event Action PackUpdateFinished;
 
         public class Config
         {
@@ -36,10 +43,11 @@ namespace Journalist
             ChangeConfig(config);
         }
 
-        public void ChangeConfig(Config config)
+        // can be used without disposing
+        public Packer ChangeConfig(Config config)
         {
 
-            Path = config.Path ?? @".\";
+            WatchingPath = config.Path ?? @".\";
             packFileNameFilters = config.PackFileNameFilters ?? new List<string>();
 
             if (watcher != null)
@@ -52,7 +60,8 @@ namespace Journalist
             }
             updatingThread?.Abort();
 
-            watcher = new FileSystemWatcher(Path, config.TargetFileNameFilter ?? "")
+            targetFileNameFilter = config.TargetFileNameFilter ?? "";
+            watcher = new FileSystemWatcher(WatchingPath, targetFileNameFilter)
             {
                 IncludeSubdirectories = true,
                 NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime | NotifyFilters.Size,
@@ -62,9 +71,11 @@ namespace Journalist
             watcher.Deleted += HandleFileEvent;
             watcher.Renamed += HandleFileEvent;
             watcher.EnableRaisingEvents = true;
+
+            return this;
         }
 
-        ~Packer()
+        public void Dispose()
         {
             updatingThread?.Join(1000);
             updatingThread?.Abort();
@@ -80,7 +91,7 @@ namespace Journalist
                     packFileNames.Clear();
 
                     var queue = new Queue<string>();
-                    queue.Enqueue(Path);
+                    queue.Enqueue(WatchingPath);
                     while (queue.Count > 0 && !PackFull)
                     {
                         var dir = queue.Dequeue();
@@ -106,12 +117,13 @@ namespace Journalist
                             }
                         }
                     }
-                    PackUpdateFinishing();
+                    PackUpdateFinishing?.Invoke();
                     UpdatingPackFiles = false;
                 }
+                PackUpdateFinished?.Invoke();
             }
 
-            if (updatingThread == null || updatingThread.ThreadState == ThreadState.Stopped)
+            if (updatingThread == null || updatingThread.ThreadState == System.Threading.ThreadState.Stopped)
             {
                 updatingThread = new Thread(new ThreadStart(update));
                 updatingThread.Start();
@@ -120,7 +132,109 @@ namespace Journalist
 
         private void HandleFileEvent(object sender, FileSystemEventArgs e)
         {
-            Console.WriteLine($"change type: {e.ChangeType} fullpath: {e.FullPath}");
+            StartUpdatingPackFiles();
         }
+
+        // returns zip file name, returned file should be deleted after use
+        public string Pack()
+        {
+            string packingDir;
+            bool copied = PackFull;  // cache to avoid mis-deleting
+            if (copied)
+            {
+                packingDir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "pack")).FullName;
+                lock (packFileNames)
+                {
+                    foreach (var path in packFileNames)
+                    {
+                        string relativePath;
+                        try
+                        {
+                            relativePath = GetRelativePath(WatchingPath, path);
+                        }
+                        catch (Exception e)
+                        {
+                            relativePath = Path.GetFileName(path);
+                            Console.WriteLine($"Error: Following exception occurred while getting relative path.\n{e}");
+                        }
+                        File.Copy(path, Path.Combine(packingDir, relativePath), true);
+                    }
+                }
+            }
+            else
+            {
+                packingDir = new DirectoryInfo(WatchingPath).FullName;
+            }
+            string zipExe = Path.Combine(
+                Path.GetDirectoryName(Application.ResourceAssembly.Location),
+                "7z.exe");
+            string zipFileName = Path.Combine(Path.GetTempPath(), $"{DateTime.Now.Ticks}.zip");
+
+            var filterList = new string[packFileNameFilters.Count + 1];
+            filterList[0] = targetFileNameFilter;
+            packFileNameFilters.CopyTo(filterList, 1);
+            string filterListString = string.Join(" ", filterList);
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = zipExe,
+                CreateNoWindow = false,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = $"a {zipFileName} {filterListString} -r",
+                UseShellExecute = false,
+                WorkingDirectory = packingDir,
+                RedirectStandardOutput = true
+            };
+            using (Process process = Process.Start(psi))
+            {
+                process.WaitForExit();
+            }
+            if (copied)
+            {
+                Directory.Delete(packingDir);
+            }
+            return zipFileName;
+        }
+
+        private static string GetRelativePath(string fromPath, string toPath)
+        {
+            int fromAttr = GetPathAttribute(fromPath);
+            int toAttr = GetPathAttribute(toPath);
+
+            StringBuilder path = new StringBuilder(260); // MAX_PATH
+            if (PathRelativePathTo(
+                path,
+                fromPath,
+                fromAttr,
+                toPath,
+                toAttr) == 0)
+            {
+                throw new ArgumentException("Paths must have a common prefix");
+            }
+            return path.ToString();
+        }
+
+        private static int GetPathAttribute(string path)
+        {
+            DirectoryInfo di = new DirectoryInfo(path);
+            if (di.Exists)
+            {
+                return FILE_ATTRIBUTE_DIRECTORY;
+            }
+
+            FileInfo fi = new FileInfo(path);
+            if (fi.Exists)
+            {
+                return FILE_ATTRIBUTE_NORMAL;
+            }
+
+            throw new FileNotFoundException();
+        }
+
+        private const int FILE_ATTRIBUTE_DIRECTORY = 0x10;
+        private const int FILE_ATTRIBUTE_NORMAL = 0x80;
+
+        [DllImport("shlwapi.dll", SetLastError = true)]
+        private static extern int PathRelativePathTo(StringBuilder pszPath,
+            string pszFrom, int dwAttrFrom, string pszTo, int dwAttrTo);
     }
 }

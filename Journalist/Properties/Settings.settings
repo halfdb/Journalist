@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Journalist.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="PackNamedFilters" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="PackTitledFilters" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;string&gt;C/C++|*.c *.cpp *.h *.hpp&lt;/string&gt;
@@ -12,8 +12,17 @@
     <Setting Name="TargetFilters" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;string&gt;.axf&lt;/string&gt;
+  &lt;string&gt;*.axf&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
+    </Setting>
+    <Setting Name="PackFilterIndex" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="TargetFilterIndex" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="WatchingPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\</Value>
     </Setting>
   </Settings>
 </SettingsFile>
