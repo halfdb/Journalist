@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Journalist
 {
@@ -20,6 +21,26 @@ namespace Journalist
             AppName = TryResourceString("#AppName#");
             InitializeComponent();
             InitializeNotifyIcon();
+
+            if (true)
+            {
+                Console.WriteLine(Directory.GetCurrentDirectory());
+                Packer packer = new Packer(new Packer.Config()
+                {
+                    Path = "./",
+                    PackFileNameFilters = new string[] {"*.txt"},
+                    TargetFileNameFilter = "*.target"
+                });
+                using (var f = File.CreateText(@".\g.target"))
+                {
+                    f.WriteLine("ewgw");
+                }
+                File.Delete(@".\g.target");
+                using (var f = File.CreateText(@".\g.target"))
+                {
+                    f.WriteLine("jins");
+                }
+            }
         }
 
         private string TryResourceString(string key)
