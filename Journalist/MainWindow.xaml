@@ -5,8 +5,85 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Journalist"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        x:Name="MainWindow"
+        Title="Journalist" MinHeight="450" MinWidth="600">
     <Grid>
         
+        <Border x:Name="Content" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="True">
+            <Border.Effect>
+                <BlurEffect x:Name="ContentBlur" Radius="0" RenderingBias="Performance"/>
+            </Border.Effect>
+            <DockPanel>
+                <Grid DockPanel.Dock="Top">
+                    <StackPanel>
+
+                        <Grid>
+                            <Separator Margin="15, 0"/>
+                            <Border Background="White" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
+                                <TextBlock x:Name="JobTitle" FontSize="12" >Job</TextBlock>
+                            </Border>
+                        </Grid>
+                        <DockPanel>
+                            <Button x:Name="SelectJobButton" DockPanel.Dock="Right" Margin="0,10,50,10" Width="80">Select...</Button>
+                            <ComboBox x:Name="JobCombo" DockPanel.Dock="Left" Margin="50,10, 30, 10" HorizontalAlignment="Stretch" SelectedIndex="0">
+                                <ComboBoxItem>(Not Selected)</ComboBoxItem>
+                            </ComboBox>
+                        </DockPanel>
+                        <Grid>
+                            <Separator Margin="15, 0"/>
+                            <Border Background="White" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
+                                <TextBlock x:Name="DirectoryTitle" FontSize="12" >Watching Directory</TextBlock>
+                            </Border>
+                        </Grid>
+                        <DockPanel>
+                            <Button x:Name="BrowseButton" DockPanel.Dock="Right" Margin="0,10,50,10" Width="80">Browse...</Button>
+                            <TextBox x:Name="DirectoryText" DockPanel.Dock="Left" Text="C:\" Margin="50,10, 30, 10" HorizontalAlignment="Stretch"/>
+                        </DockPanel>
+                        <Grid>
+                            <Separator Margin="15, 0"/>
+                            <Border Background="White" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
+                                <TextBlock x:Name="UploadTitle" FontSize="12" >Files to upload</TextBlock>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+
+                <Grid DockPanel.Dock="Bottom">
+                    <Button x:Name="SettingButton" HorizontalAlignment="Right" Width="80" Margin="0, 10, 50, 20">Settings...</Button>
+                    <ProgressBar x:Name="MainProgress" VerticalAlignment="Bottom" Height="10" IsIndeterminate="True" Visibility="Hidden"></ProgressBar>
+                </Grid>
+
+                <ListView x:Name="FileList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="50, 10">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="50"></GridViewColumn>
+                            <GridViewColumn Width="100"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </DockPanel>
+        </Border>
+        <Border x:Name="Cover" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Hidden">
+            <StackPanel Width="250" Height="250">
+                <Border BorderThickness="1" BorderBrush="Gray" Background="White" CornerRadius="3">
+                    <DockPanel>
+                        <ProgressBar x:Name="LoginProgress" DockPanel.Dock="Bottom" Height="5" IsIndeterminate="True" Visibility="Hidden"></ProgressBar>
+                        <StackPanel Margin="20, 10">
+                            <StackPanel HorizontalAlignment="Stretch">
+                                <DockPanel>
+                                    <TextBox x:Name="PhoneText" DockPanel.Dock="Right" Width="100" Margin="10, 5"></TextBox>
+                                    <TextBlock x:Name="PhoneLabel" DockPanel.Dock="Left" Margin="10, 5" FontSize="12">Phone No.</TextBlock>
+                                </DockPanel>
+                                <DockPanel>
+                                    <PasswordBox x:Name="PasswordText" DockPanel.Dock="Right" Width="100" Margin="10, 5"></PasswordBox>
+                                    <TextBlock x:Name="PasswordLabel" DockPanel.Dock="Left" Margin="10, 5" FontSize="12">Password</TextBlock>
+                                </DockPanel>
+                            </StackPanel>
+                            <Button x:Name="LoginButton" HorizontalAlignment="Center" Width="50" Margin="0,8,0,0">Login</Button>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
