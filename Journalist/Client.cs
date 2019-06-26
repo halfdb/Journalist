@@ -16,7 +16,23 @@ namespace Journalist
 
         protected WebClient WebClient = new WebClient();
 
-        public event EventHandler AccessCompleted;
+        public enum EventType
+        {
+            Login,
+            GetJobList,
+            UploadJob,
+            Fail
+        }
+
+        public class AccessEventArgs : EventArgs
+        {
+            public EventType eventType;
+            public string message;
+        }
+
+        public delegate void AccessEventHandler(object sender, AccessEventArgs eventType);
+
+        public event AccessEventHandler AccessCompleted;
 
         public enum State
         {
@@ -38,16 +54,6 @@ namespace Journalist
             public BadStateException(string message) : base(message) { }
             public BadStateException(string message, Exception inner) : base(message, inner) { }
             protected BadStateException(
-              System.Runtime.Serialization.SerializationInfo info,
-              System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
-        }
-
-        [Serializable]
-        public class FailureException : Exception
-        {
-            public FailureException(string message) : base($"Failure while accessing. Message: {message}") { }
-            public FailureException(string message, Exception inner) : base(message, inner) { }
-            protected FailureException(
               System.Runtime.Serialization.SerializationInfo info,
               System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
         }
@@ -102,7 +108,7 @@ namespace Journalist
             if (eventArgs.Cancelled)
             {
                 resetState();
-                return;
+                AccessCompleted?.Invoke(this, new AccessEventArgs() { message = "Access canceled", eventType = EventType.Fail });
             }
             else if (eventArgs is OpenReadCompletedEventArgs e1)
             {
@@ -124,7 +130,8 @@ namespace Journalist
                             if (result.Code != 0)
                             {
                                 resetState();
-                                throw new FailureException(result.Message);
+                                AccessCompleted?.Invoke(this, new AccessEventArgs() { message = result.Message, eventType = EventType.Fail });
+                                return;
                             }
                             pageCount = result.Count;
                         }
@@ -137,7 +144,8 @@ namespace Journalist
                             if (result.Code != 0)
                             {
                                 resetState();
-                                throw new FailureException(result.Message);
+                                AccessCompleted?.Invoke(this, new AccessEventArgs() { message = result.Message, eventType = EventType.Fail });
+                                return;
                             }
                             Jobs.AddRange(result.Jobs);
                         }
@@ -158,6 +166,8 @@ namespace Journalist
                         else
                         {
                             currentPage = 0;
+                            CurrentState = State.Ready;
+                            AccessCompleted?.Invoke(this, new AccessEventArgs() { eventType = EventType.GetJobList });
                         }
                         break;
                     default:
@@ -183,11 +193,14 @@ namespace Journalist
                             if (result.Code != 0)
                             {
                                 resetState();
-                                throw new FailureException(result.Message);
+                                AccessCompleted?.Invoke(this, new AccessEventArgs() { message = result.Message, eventType = EventType.Fail });
+                                return;
                             }
                             token = result.Token;
                             WebClient.Headers.Add("token", token);
                         }
+                        CurrentState = State.Ready;
+                        AccessCompleted?.Invoke(this, new AccessEventArgs() { eventType = EventType.Login });
                         break;
                     default:
                         Console.WriteLine($"Warning: unexpected TaskType: {eventArgs.UserState}");
@@ -211,9 +224,12 @@ namespace Journalist
                             if (result.Code != 0)
                             {
                                 resetState();
-                                throw new FailureException(result.Message);
+                                AccessCompleted?.Invoke(this, new AccessEventArgs() { message = result.Message, eventType = EventType.Fail });
+                                return;
                             }
                         }
+                        CurrentState = State.Ready;
+                        AccessCompleted?.Invoke(this, new AccessEventArgs() { eventType = EventType.UploadJob });
                         break;
                     default:
                         break;
@@ -223,17 +239,14 @@ namespace Journalist
             {
                 Console.WriteLine("Warning: unexpected event.");
             }
-
-            CurrentState = State.Ready;
-            AccessCompleted?.Invoke(this, EventArgs.Empty);
         }
 
-        public void LoginAsync(string username, string password)
+        public void LoginAsync(string phone, string password)
         {
             CheckState(State.NotLoggedIn, State.Ready);
             var parameters = new NameValueCollection
             {
-                { "phone", username },
+                { "phone", phone },
                 { "password", password }
             };
             CurrentState = State.LoggingIn;
