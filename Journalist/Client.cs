@@ -19,6 +19,7 @@ namespace Journalist
         public enum EventType
         {
             Login,
+            LoginFail,
             GetJobList,
             UploadJob,
             Fail
@@ -26,8 +27,8 @@ namespace Journalist
 
         public class AccessEventArgs : EventArgs
         {
-            public EventType eventType;
-            public string message;
+            public EventType EventType;
+            public string Message;
         }
 
         public delegate void AccessEventHandler(object sender, AccessEventArgs eventType);
@@ -69,13 +70,18 @@ namespace Journalist
         protected string token;
         public List<Site.Job> Jobs = new List<Site.Job>();
         protected int? selectedJodId = null;
-        public int? SelectedJobId {
+        public int? SelectedJobId
+        {
             get => selectedJodId;
             set
             {
                 CheckState(State.Ready, State.Accessing);
                 selectedJodId = value;
             }
+        }
+        public bool HasSelectedJob
+        {
+            get => selectedJodId != null;
         }
 
         public Client(Site site)
@@ -108,16 +114,10 @@ namespace Journalist
             if (eventArgs.Cancelled)
             {
                 resetState();
-                AccessCompleted?.Invoke(this, new AccessEventArgs() { message = "Access canceled", eventType = EventType.Fail });
+                AccessCompleted?.Invoke(this, new AccessEventArgs() { Message = "Access canceled", EventType = EventType.Fail });
             }
             else if (eventArgs is OpenReadCompletedEventArgs e1)
             {
-#if DEBUG
-                Console.WriteLine("Debug: Content received:");
-                StreamReader reader = new StreamReader(e1.Result);
-                Console.WriteLine(reader.ReadToEnd());
-                e1.Result.Position = 0;
-#endif
                 DataContractJsonSerializer serializer;
                 switch (e1.UserState)
                 {
@@ -130,7 +130,7 @@ namespace Journalist
                             if (result.Code != 0)
                             {
                                 resetState();
-                                AccessCompleted?.Invoke(this, new AccessEventArgs() { message = result.Message, eventType = EventType.Fail });
+                                AccessCompleted?.Invoke(this, new AccessEventArgs() { Message = result.Message, EventType = EventType.Fail });
                                 return;
                             }
                             pageCount = result.Count;
@@ -144,7 +144,7 @@ namespace Journalist
                             if (result.Code != 0)
                             {
                                 resetState();
-                                AccessCompleted?.Invoke(this, new AccessEventArgs() { message = result.Message, eventType = EventType.Fail });
+                                AccessCompleted?.Invoke(this, new AccessEventArgs() { Message = result.Message, EventType = EventType.Fail });
                                 return;
                             }
                             Jobs.AddRange(result.Jobs);
@@ -167,7 +167,7 @@ namespace Journalist
                         {
                             currentPage = 0;
                             CurrentState = State.Ready;
-                            AccessCompleted?.Invoke(this, new AccessEventArgs() { eventType = EventType.GetJobList });
+                            AccessCompleted?.Invoke(this, new AccessEventArgs() { EventType = EventType.GetJobList });
                         }
                         break;
                     default:
@@ -193,14 +193,14 @@ namespace Journalist
                             if (result.Code != 0)
                             {
                                 resetState();
-                                AccessCompleted?.Invoke(this, new AccessEventArgs() { message = result.Message, eventType = EventType.Fail });
+                                AccessCompleted?.Invoke(this, new AccessEventArgs() { Message = result.Message, EventType = EventType.LoginFail });
                                 return;
                             }
                             token = result.Token;
                             WebClient.Headers.Add("token", token);
                         }
                         CurrentState = State.Ready;
-                        AccessCompleted?.Invoke(this, new AccessEventArgs() { eventType = EventType.Login });
+                        AccessCompleted?.Invoke(this, new AccessEventArgs() { EventType = EventType.Login });
                         break;
                     default:
                         Console.WriteLine($"Warning: unexpected TaskType: {eventArgs.UserState}");
@@ -224,12 +224,12 @@ namespace Journalist
                             if (result.Code != 0)
                             {
                                 resetState();
-                                AccessCompleted?.Invoke(this, new AccessEventArgs() { message = result.Message, eventType = EventType.Fail });
+                                AccessCompleted?.Invoke(this, new AccessEventArgs() { Message = result.Message, EventType = EventType.Fail });
                                 return;
                             }
                         }
                         CurrentState = State.Ready;
-                        AccessCompleted?.Invoke(this, new AccessEventArgs() { eventType = EventType.UploadJob });
+                        AccessCompleted?.Invoke(this, new AccessEventArgs() { EventType = EventType.UploadJob });
                         break;
                     default:
                         break;
@@ -249,11 +249,11 @@ namespace Journalist
                 { "phone", phone },
                 { "password", password }
             };
-            CurrentState = State.LoggingIn;
             var uri = new Uri(Site.LoginUrl);
 #if DEBUG
             Console.WriteLine($"Debug: accessing uri: {uri}");
 #endif
+            CurrentState = State.LoggingIn;
             WebClient.UploadValuesAsync(uri, "POST", parameters, TaskType.Login);
         }
 
@@ -276,6 +276,7 @@ namespace Journalist
 #if DEBUG
             Console.WriteLine($"Debug: accessing uri: {uri}");
 #endif
+            CurrentState = State.Accessing;
             WebClient.OpenReadAsync(uri, TaskType.GetJobList);
         }
 
@@ -289,6 +290,7 @@ namespace Journalist
 #if DEBUG
                 Console.WriteLine($"Debug: accessing uri: {uri}");
 #endif
+                CurrentState = State.Accessing;
                 WebClient.UploadFileAsync(uri, "POST", fileName, TaskType.UploadJob);
             }
             else

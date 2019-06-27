@@ -19,8 +19,8 @@ namespace Journalist
         protected IList<string> packFileNameFilters;
 
         private const int packItemLimit = 100;
-        protected HashSet<string> packFileNames = new HashSet<string>();
-        public bool PackFull { get => packFileNames.Count >= packItemLimit; }
+        public HashSet<string> PackFileNames = new HashSet<string>();
+        public bool PackFull { get => PackFileNames.Count >= packItemLimit; }
 
         protected Thread updatingThread;
         public bool UpdatingPackFiles { get; protected set; }
@@ -85,10 +85,10 @@ namespace Journalist
         {
             void update()
             {
-                lock (packFileNames)
+                lock (PackFileNames)
                 {
                     UpdatingPackFiles = true;
-                    packFileNames.Clear();
+                    PackFileNames.Clear();
 
                     var queue = new Queue<string>();
                     queue.Enqueue(WatchingPath);
@@ -106,9 +106,9 @@ namespace Journalist
                             if (!PackFull)
                             {
                                 var files = Directory.GetFiles(dir, pattern)
-                                    .Take(packItemLimit - packFileNames.Count)
+                                    .Take(packItemLimit - PackFileNames.Count)
                                     .ToList();
-                                packFileNames.UnionWith(files);
+                                PackFileNames.UnionWith(files);
                             }
                             else
                             {
@@ -143,9 +143,9 @@ namespace Journalist
             if (copied)
             {
                 packingDir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "pack")).FullName;
-                lock (packFileNames)
+                lock (PackFileNames)
                 {
-                    foreach (var path in packFileNames)
+                    foreach (var path in PackFileNames)
                     {
                         string relativePath;
                         try

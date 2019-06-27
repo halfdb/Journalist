@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
-using System.IO;
 
 namespace Journalist
 {
@@ -17,31 +14,44 @@ namespace Journalist
         protected bool cancelExit = true;
         protected NotifyIcon notifyIcon = null;
 
-        protected StringCollection packTitledFilters;
-        protected int packFilterIndex;
-        protected StringCollection targetFilters;
-        protected int targetFilterIndex;
-        protected string watchingPath;
-        private Packer packer;
-
-        private bool FullWarning { get => packer.PackFull; }
-
-        public MainWindow()
+        private const int blurRadius = 5;
+        protected void ShowLogin(bool show=true)
         {
-            SetLanguageDictionary();
-            AppName = TryResourceString("#AppName#");
-            InitializeComponent();
-            InitializeNotifyIcon();
-
-            packTitledFilters = Properties.Settings.Default.PackTitledFilters;
-            packFilterIndex = Properties.Settings.Default.PackFilterIndex;
-            targetFilters = Properties.Settings.Default.TargetFilters;
-            targetFilterIndex = Properties.Settings.Default.TargetFilterIndex;
-            watchingPath = Properties.Settings.Default.WatchingPath;
-
-            if (true)  // TODO Log in.
+            if (show)
             {
-                RestartWatching();
+                MainContent.IsEnabled = false;
+                MainContentBlur.Radius = blurRadius;
+                Cover.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MainContent.IsEnabled = true;
+                MainContentBlur.Radius = 0;
+                Cover.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            Cover.IsEnabled = false;
+            LoginProgress.Visibility = Visibility.Visible;
+
+            var phone = PhoneText.Text;
+            var password = PasswordText.Password;
+            if (phone.Length != 0 && password.Length != 0)
+            {
+                if (sender != this)
+                {
+                    SavedPhone = phone;
+                    SavedPassword = password;
+                }
+
+                client.LoginAsync(phone, password);
+            }
+            else
+            {
+                Cover.IsEnabled = true;
+                LoginProgress.Visibility = Visibility.Hidden;
             }
         }
 
@@ -104,43 +114,6 @@ namespace Journalist
             }
         }
 
-        protected void RestartWatching()
-        {
-            var packFilters = packTitledFilters
-                [packFilterIndex]  // -> "title|filters"
-                .Split('|')  // -> ["title", "filters"]
-                [1]  // -> "filters"
-                .Split(' ');  // -> ["filter1", "filter2"...]
-            var config = new Packer.Config()
-            {
-                Path = watchingPath,
-                PackFileNameFilters = packFilters,
-                TargetFileNameFilter = targetFilters[targetFilterIndex],
-            };
-
-            packer = packer?.ChangeConfig(config) ?? new Packer(config);
-            packer.PackUpdateFinished += PackUpdateFinished;
-        }
-
-        private void PackUpdateFinished()
-        {
-            if (FullWarning)
-            {
-                notifyIcon.ShowBalloonTip(
-                    ballonTimeout,
-                    AppName,
-                    TryResourceString("#FileFullTip#"),
-                    ToolTipIcon.Warning
-                    );
-            }
-            string zipFileName = packer.Pack();
-            Console.WriteLine($"Info: {zipFileName} made");
-            // TODO upload
-#if !DEBUG
-            File.Delete(zipFileName);
-#endif
-        }
-
         protected override void OnClosing(CancelEventArgs e)
         {
             if (cancelExit)
@@ -156,6 +129,48 @@ namespace Journalist
         {
             notifyIcon.Visible = false;
             base.OnClosed(e);
+        }
+
+        private void DirectoryText_LostFocus(object sender, RoutedEventArgs e)
+        {
+            watchingPath = DirectoryText.Text;
+            RestartWatching();
+        }
+
+        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        {
+            using (var dialog = new FolderBrowserDialog())
+            {
+                var result = dialog.ShowDialog();
+                if (result != System.Windows.Forms.DialogResult.OK)
+                {
+                    return;
+                }
+                watchingPath = dialog.SelectedPath;
+                DirectoryText.Text = watchingPath;
+                RestartWatching();
+            }
+        }
+
+        private void JobCombo_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (JobCombo.SelectedIndex > 0)
+            {
+                var job = (Site.Job) JobCombo.SelectedItem;
+                if (client != null)
+                {
+                    client.SelectedJobId = job.Id;
+                }
+                Properties.Settings.Default.SelectedJobId = job.Id;
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                if (client != null)
+                {
+                    client.SelectedJobId = null;
+                }
+            }
         }
     }
 }

@@ -5,13 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Journalist"
         mc:Ignorable="d"
-        x:Name="MainWindow"
         Title="Journalist" MinHeight="450" MinWidth="600">
     <Grid>
         
-        <Border x:Name="Content" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="True">
+        <Border x:Name="MainContent" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsEnabled="False">
             <Border.Effect>
-                <BlurEffect x:Name="ContentBlur" Radius="0" RenderingBias="Performance"/>
+                <BlurEffect x:Name="MainContentBlur" Radius="5" RenderingBias="Performance"/>
             </Border.Effect>
             <DockPanel>
                 <Grid DockPanel.Dock="Top">
@@ -24,9 +23,8 @@
                             </Border>
                         </Grid>
                         <DockPanel>
-                            <Button x:Name="SelectJobButton" DockPanel.Dock="Right" Margin="0,10,50,10" Width="80">Select...</Button>
-                            <ComboBox x:Name="JobCombo" DockPanel.Dock="Left" Margin="50,10, 30, 10" HorizontalAlignment="Stretch" SelectedIndex="0">
-                                <ComboBoxItem>(Not Selected)</ComboBoxItem>
+                            <Button x:Name="SelectJobButton" DockPanel.Dock="Right" Margin="0,10,50,10" Width="80" Visibility="Collapsed">Select...</Button>
+                            <ComboBox x:Name="JobCombo" DockPanel.Dock="Left" Margin="50,10, 30, 10" HorizontalAlignment="Stretch" SelectedIndex="0" SelectionChanged="JobCombo_SelectionChanged">
                             </ComboBox>
                         </DockPanel>
                         <Grid>
@@ -36,8 +34,8 @@
                             </Border>
                         </Grid>
                         <DockPanel>
-                            <Button x:Name="BrowseButton" DockPanel.Dock="Right" Margin="0,10,50,10" Width="80">Browse...</Button>
-                            <TextBox x:Name="DirectoryText" DockPanel.Dock="Left" Text="C:\" Margin="50,10, 30, 10" HorizontalAlignment="Stretch"/>
+                            <Button x:Name="BrowseButton" DockPanel.Dock="Right" Margin="0,10,50,10" Width="80" Click="BrowseButton_Click">Browse...</Button>
+                            <TextBox x:Name="DirectoryText" DockPanel.Dock="Left" Margin="50,10, 30, 10" HorizontalAlignment="Stretch" LostFocus="DirectoryText_LostFocus"/>
                         </DockPanel>
                         <Grid>
                             <Separator Margin="15, 0"/>
@@ -49,21 +47,23 @@
                 </Grid>
 
                 <Grid DockPanel.Dock="Bottom">
-                    <Button x:Name="SettingButton" HorizontalAlignment="Right" Width="80" Margin="0, 10, 50, 20">Settings...</Button>
+                    <Button x:Name="SettingButton" HorizontalAlignment="Right" Width="80" Margin="0, 10, 50, 20" Visibility="Collapsed">Settings...</Button>
                     <ProgressBar x:Name="MainProgress" VerticalAlignment="Bottom" Height="10" IsIndeterminate="True" Visibility="Hidden"></ProgressBar>
                 </Grid>
 
                 <ListView x:Name="FileList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="50, 10">
-                    <ListView.View>
+                    <!--<ListView.View>
                         <GridView>
-                            <GridViewColumn Width="50"></GridViewColumn>
-                            <GridViewColumn Width="100"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=FileName}" Width="150"></GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Length}" Width="50"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Creation}" Width="100"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=LastWrite}" Width="100"/>
                         </GridView>
-                    </ListView.View>
+                    </ListView.View>-->
                 </ListView>
             </DockPanel>
         </Border>
-        <Border x:Name="Cover" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Hidden">
+        <Border x:Name="Cover" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Visible">
             <StackPanel Width="250" Height="250">
                 <Border BorderThickness="1" BorderBrush="Gray" Background="White" CornerRadius="3">
                     <DockPanel>
@@ -79,7 +79,7 @@
                                     <TextBlock x:Name="PasswordLabel" DockPanel.Dock="Left" Margin="10, 5" FontSize="12">Password</TextBlock>
                                 </DockPanel>
                             </StackPanel>
-                            <Button x:Name="LoginButton" HorizontalAlignment="Center" Width="50" Margin="0,8,0,0">Login</Button>
+                            <Button x:Name="LoginButton" HorizontalAlignment="Center" Width="50" Margin="0,8,0,0" Click="LoginButton_Click">Login</Button>
                         </StackPanel>
                     </DockPanel>
                 </Border>

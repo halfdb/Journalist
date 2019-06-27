@@ -7,5 +7,15 @@
     <system:String x:Key="#ShowWindow#">Show the window</system:String>
     <system:String x:Key="#Exit#">Exit</system:String>
     <system:String x:Key="#FileFullTip#">Too many files to upload. Maybe exclude some certain paths?</system:String>
-    
+    <system:String x:Key="#NotSelected#">(Not selected)</system:String>
+    <system:String x:Key="#FileNameHint#">File: </system:String>
+    <system:String x:Key="#LengthHint#">Size: </system:String>
+    <system:String x:Key="#CreationHint#">Creation Time: </system:String>
+    <system:String x:Key="#LastWriteHint#">Last Write Time: </system:String>
+    <system:String x:Key="#UploadFinished#">Uploading finished.</system:String>
+    <system:String x:Key="#FailWatching#">Failed to watch the directory.</system:String>
+    <system:String x:Key="#JobTitle#">Job</system:String>
+    <system:String x:Key="#DirectoryTitle#">Watching Directory</system:String>
+    <system:String x:Key="#UploadTitle#">Files to upload</system:String>
+
 </ResourceDictionary>

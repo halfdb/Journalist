@@ -90,6 +90,8 @@ namespace Journalist
             public int Expire;
             [DataMember(Name = "className")]
             public string Classname;
+
+            public override string ToString() => Name;
         }
 
         [DataContract]

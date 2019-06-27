@@ -7,5 +7,15 @@
     <system:String x:Key="#ShowWindow#">显示窗口</system:String>
     <system:String x:Key="#Exit#">退出</system:String>
     <system:String x:Key="#FileFullTip#">上传文件过多。是否需要排除特定目录？</system:String>
+    <system:String x:Key="#NotSelected#">（未选择）</system:String>
+    <system:String x:Key="#FileNameHint#">文件：</system:String>
+    <system:String x:Key="#LengthHint#">大小:</system:String>
+    <system:String x:Key="#CreationHint#">创建时间：</system:String>
+    <system:String x:Key="#LastWriteHint#">最后修改时间：</system:String>
+    <system:String x:Key="#UploadFinished#">完成上传。</system:String>
+    <system:String x:Key="#FailWatching#">无法监测指定目录。</system:String>
+    <system:String x:Key="#JobTitle#">作业</system:String>
+    <system:String x:Key="#DirectoryTitle#">监测目录</system:String>
+    <system:String x:Key="#UploadTitle#">待上传文件</system:String>
 
 </ResourceDictionary>
