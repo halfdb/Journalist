@@ -289,15 +289,6 @@ namespace Journalist
         protected bool Uploading = false;
         private void PackUpdateFinished()
         {
-            if (FullWarning)
-            {
-                notifyIcon.ShowBalloonTip(
-                    ballonTimeout,
-                    AppName,
-                    TryResourceString("#FileFullTip#"),
-                    ToolTipIcon.Warning
-                    );
-            }
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 var filenameHint = TryResourceString("#FileNameHint#");
@@ -311,11 +302,22 @@ namespace Journalist
                     FileList.Items.Add(info);
                 }
             }));
-            
+
+            if (FullWarning)
+            {
+                notifyIcon.ShowBalloonTip(
+                    ballonTimeout,
+                    AppName,
+                    TryResourceString("#FileFullTip#"),
+                    ToolTipIcon.Warning
+                    );
+                return;
+            }
             if (!JobSelectionReady)
             {
                 return;
             }
+
             ZipFileName = packer.Pack();
             Console.WriteLine($"Info: {ZipFileName} made");
             if (!Uploading)
