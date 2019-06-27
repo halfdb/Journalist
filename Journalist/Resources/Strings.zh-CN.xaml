@@ -17,5 +17,9 @@
     <system:String x:Key="#JobTitle#">作业</system:String>
     <system:String x:Key="#DirectoryTitle#">监测目录</system:String>
     <system:String x:Key="#UploadTitle#">待上传文件</system:String>
+    <system:String x:Key="#PhoneLabel#">手机号</system:String>
+    <system:String x:Key="#PasswordLabel#">密码</system:String>
+    <system:String x:Key="#LoginButton#">登录</system:String>
+    <system:String x:Key="#BrowseButton#">浏览...</system:String>
 
 </ResourceDictionary>

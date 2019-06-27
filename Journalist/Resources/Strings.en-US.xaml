@@ -17,5 +17,9 @@
     <system:String x:Key="#JobTitle#">Job</system:String>
     <system:String x:Key="#DirectoryTitle#">Watching Directory</system:String>
     <system:String x:Key="#UploadTitle#">Files to upload</system:String>
+    <system:String x:Key="#PhoneLabel#">Phone No.</system:String>
+    <system:String x:Key="#PasswordLabel#">Password</system:String>
+    <system:String x:Key="#LoginButton#">Login</system:String>
+    <system:String x:Key="#BrowseButton#">Browse...</system:String>
 
 </ResourceDictionary>

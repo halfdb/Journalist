@@ -133,8 +133,11 @@ namespace Journalist
 
         private void DirectoryText_LostFocus(object sender, RoutedEventArgs e)
         {
-            watchingPath = DirectoryText.Text;
-            RestartWatching();
+            if (watchingPath != DirectoryText.Text)
+            {
+                watchingPath = DirectoryText.Text;
+                RestartWatching();
+            }
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)

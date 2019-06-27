@@ -111,9 +111,15 @@ namespace Journalist
 
             JobCombo.Items.Add(TryResourceString("#NotSelected#"));
             DirectoryText.Text = watchingPath;
+
             JobTitle.Text = TryResourceString("#JobTitle#");
             DirectoryTitle.Text = TryResourceString("#DirectoryTitle#");
             UploadTitle.Text = TryResourceString("#UploadTitle#");
+
+            PhoneLabel.Text = TryResourceString("#PhoneLabel#");
+            PasswordLabel.Text = TryResourceString("#PasswordLabel#");
+            LoginButton.Content = TryResourceString("#LoginButton#");
+            BrowseButton.Content = TryResourceString("#BrowseButton#");
 
             client = new Client(new Site());
             client.AccessCompleted += Client_AccessCompleted;
@@ -312,8 +318,11 @@ namespace Journalist
             }
             ZipFileName = packer.Pack();
             Console.WriteLine($"Info: {ZipFileName} made");
-            Uploading = true;
-            client.UploadJobAsync(ZipFileName);
+            if (!Uploading)
+            {
+                Uploading = true;
+                client.UploadJobAsync(ZipFileName);
+            }
         }
 
     }

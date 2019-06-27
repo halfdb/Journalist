@@ -157,7 +157,9 @@ namespace Journalist
                             relativePath = Path.GetFileName(path);
                             Console.WriteLine($"Error: Following exception occurred while getting relative path.\n{e}");
                         }
-                        File.Copy(path, Path.Combine(packingDir, relativePath), true);
+                        var destination = Path.Combine(packingDir, relativePath);
+                        Directory.CreateDirectory(Directory.GetParent(destination).FullName);
+                        File.Copy(path, destination, true);
                     }
                 }
             }
@@ -177,7 +179,7 @@ namespace Journalist
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = zipExe,
-                CreateNoWindow = false,
+                CreateNoWindow = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
                 Arguments = $"a {zipFileName} {filterListString} -r",
                 UseShellExecute = false,
@@ -190,7 +192,7 @@ namespace Journalist
             }
             if (copied)
             {
-                Directory.Delete(packingDir);
+                Directory.Delete(packingDir, true);
             }
             return zipFileName;
         }
