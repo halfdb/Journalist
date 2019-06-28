@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Windows;
 
 namespace Journalist
 {
-    class Packer : IDisposable
+    class Packer
     {
         protected FileSystemWatcher watcher;
         protected string WatchingPath;
@@ -18,12 +18,26 @@ namespace Journalist
         protected IList<string> packFileNameFilters;
 
         private const int packItemLimit = 100;
-        public HashSet<string> PackFileNames = new HashSet<string>();
+
+        public class FileItem
+        {
+            public string FileName { get; set; }
+            public long Length { get; set; }
+            public DateTime Creation { get; set; }
+            public DateTime LastWrite { get; set; }
+            public FileItem(string fileName)
+            {
+                FileName = fileName;
+                Length = new FileInfo(fileName).Length;
+                Creation = File.GetCreationTime(fileName);
+                LastWrite = File.GetLastWriteTime(fileName);
+            }
+        }
+
+        public ObservableCollection<FileItem> PackFileNames = new ObservableCollection<FileItem>();
         public bool PackFull { get => PackFileNames.Count >= packItemLimit; }
 
-        protected Thread updatingThread;
         public bool UpdatingPackFiles { get; protected set; }
-        public event Action PackUpdateFinishing;
         public event Action PackUpdateFinished;
 
         public class Config
@@ -57,7 +71,6 @@ namespace Journalist
                 watcher.Deleted -= HandleFileEvent;
                 watcher.Renamed -= HandleFileEvent;
             }
-            updatingThread?.Abort();
 
             targetFileNameFilter = config.TargetFileNameFilter ?? "";
             watcher = new FileSystemWatcher(WatchingPath, targetFileNameFilter)
@@ -74,21 +87,21 @@ namespace Journalist
             return this;
         }
 
-        public void Dispose()
-        {
-            updatingThread?.Join(1000);
-            updatingThread?.Abort();
-        }
-
         public void StartUpdatingPackFiles()
         {
             void update()
             {
                 var filters = packFileNameFilters.ToList();
                 filters.Add(targetFileNameFilter);
+
+                if (UpdatingPackFiles)
+                {
+                    return;
+                }
+
+                UpdatingPackFiles = true;
                 lock (PackFileNames)
                 {
-                    UpdatingPackFiles = true;
                     PackFileNames.Clear();
 
                     var queue = new Queue<string>();
@@ -109,7 +122,10 @@ namespace Journalist
                                 var files = Directory.GetFiles(dir, pattern)
                                     .Take(packItemLimit - PackFileNames.Count)
                                     .ToList();
-                                PackFileNames.UnionWith(files);
+                                foreach (var file in files)
+                                {
+                                    PackFileNames.Add(new FileItem(file));
+                                }
                             }
                             else
                             {
@@ -118,17 +134,12 @@ namespace Journalist
                             }
                         }
                     }
-                    PackUpdateFinishing?.Invoke();
-                    UpdatingPackFiles = false;
                 }
+                UpdatingPackFiles = false;
                 PackUpdateFinished?.Invoke();
             }
 
-            if (updatingThread == null || updatingThread.ThreadState == System.Threading.ThreadState.Stopped)
-            {
-                updatingThread = new Thread(new ThreadStart(update));
-                updatingThread.Start();
-            }
+            Application.Current.Dispatcher.BeginInvoke(new Action(() => update()));
         }
 
         private void HandleFileEvent(object sender, FileSystemEventArgs e)
@@ -146,21 +157,21 @@ namespace Journalist
                 packingDir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "pack")).FullName;
                 lock (PackFileNames)
                 {
-                    foreach (var path in PackFileNames)
+                    foreach (var fileItem in PackFileNames)
                     {
                         string relativePath;
                         try
                         {
-                            relativePath = GetRelativePath(WatchingPath, path);
+                            relativePath = GetRelativePath(WatchingPath, fileItem.FileName);
                         }
                         catch (Exception e)
                         {
-                            relativePath = Path.GetFileName(path);
+                            relativePath = Path.GetFileName(fileItem.FileName);
                             Console.WriteLine($"Error: Following exception occurred while getting relative path.\n{e}");
                         }
                         var destination = Path.Combine(packingDir, relativePath);
                         Directory.CreateDirectory(Directory.GetParent(destination).FullName);
-                        File.Copy(path, destination, true);
+                        File.Copy(fileItem.FileName, destination, true);
                     }
                 }
             }

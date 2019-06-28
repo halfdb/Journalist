@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.IO;
@@ -120,6 +118,10 @@ namespace Journalist
             PasswordLabel.Text = TryResourceString("#PasswordLabel#");
             LoginButton.Content = TryResourceString("#LoginButton#");
             BrowseButton.Content = TryResourceString("#BrowseButton#");
+
+            FileNameColumn.Header = TryResourceString("#FileNameHeader#");
+            LengthColumn.Header = TryResourceString("#LengthHeader#");
+            LastWriteColumn.Header = TryResourceString("#LastWriteHeader#");
 
             client = new Client(new Site());
             client.AccessCompleted += Client_AccessCompleted;
@@ -276,32 +278,14 @@ namespace Journalist
             packer.StartUpdatingPackFiles();
             Properties.Settings.Default.WatchingPath = watchingPath;
             Properties.Settings.Default.Save();
+
+            FileList.ItemsSource = packer.PackFileNames;
         }
 
-        public class FileItem
-        {
-            public string FileName;
-            public long Length;
-            public DateTime Creation;
-            public DateTime LastWrite;
-        }
         private string ZipFileName;
         protected bool Uploading = false;
         private void PackUpdateFinished()
         {
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                var filenameHint = TryResourceString("#FileNameHint#");
-                var lengthHint = TryResourceString("#LengthHint#");
-                var creationHint = TryResourceString("#CreationHint#");
-                var lastWriteHint = TryResourceString("#LastWriteHint#");
-                FileList.Items.Clear();
-                foreach (var item in packer.PackFileNames)
-                {
-                    var info = $"{filenameHint}{item} {lengthHint}{new FileInfo(item).Length} {creationHint}{File.GetCreationTime(item)} {lastWriteHint}{File.GetLastWriteTime(item)}";
-                    FileList.Items.Add(info);
-                }
-            }));
 
             if (FullWarning)
             {

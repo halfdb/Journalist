@@ -52,14 +52,14 @@
                 </Grid>
 
                 <ListView x:Name="FileList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="50, 10">
-                    <!--<ListView.View>
+                    <ListView.View>
                         <GridView>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=FileName}" Width="150"></GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Length}" Width="50"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Creation}" Width="100"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=LastWrite}" Width="100"/>
+                            <GridViewColumn x:Name="FileNameColumn" DisplayMemberBinding="{Binding Path=FileName}" Width="400"/>
+                            <GridViewColumn x:Name="LengthColumn" DisplayMemberBinding="{Binding Path=Length}" Width="50"/>
+                            <!--<GridViewColumn x:Name="CreationColumn" DisplayMemberBinding="{Binding Path=Creation}" Width="150"/>-->
+                            <GridViewColumn x:Name="LastWriteColumn" DisplayMemberBinding="{Binding Path=LastWrite}" Width="150"/>
                         </GridView>
-                    </ListView.View>-->
+                    </ListView.View>
                 </ListView>
             </DockPanel>
         </Border>
