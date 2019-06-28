@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -85,6 +84,8 @@ namespace Journalist
         {
             void update()
             {
+                var filters = packFileNameFilters.ToList();
+                filters.Add(targetFileNameFilter);
                 lock (PackFileNames)
                 {
                     UpdatingPackFiles = true;
@@ -101,7 +102,7 @@ namespace Journalist
                             queue.Enqueue(sub);
                         }
 
-                        foreach (var pattern in packFileNameFilters)
+                        foreach (var pattern in filters)
                         {
                             if (!PackFull)
                             {
