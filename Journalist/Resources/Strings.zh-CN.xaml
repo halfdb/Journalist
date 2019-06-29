@@ -4,7 +4,7 @@
 
     <system:String x:Key="#AppName#">Journalist</system:String>
     <system:String x:Key="#RunningBackground#">正在后台运行</system:String>
-    <system:String x:Key="#ShowWindow#">显示窗口</system:String>
+    <system:String x:Key="#ShowWindow#">显示窗口...</system:String>
     <system:String x:Key="#Exit#">退出</system:String>
     <system:String x:Key="#FileFullTip#">上传文件过多。是否需要排除特定目录？</system:String>
     <system:String x:Key="#NotSelected#">（未选择）</system:String>
@@ -20,10 +20,17 @@
     <system:String x:Key="#PhoneLabel#">手机号</system:String>
     <system:String x:Key="#PasswordLabel#">密码</system:String>
     <system:String x:Key="#LoginButton#">登录</system:String>
+    <system:String x:Key="#SelectButton#">选择...</system:String>
     <system:String x:Key="#BrowseButton#">浏览...</system:String>
     <system:String x:Key="#FileNameHeader#">文件名</system:String>
     <system:String x:Key="#LengthHeader#">大小</system:String>
     <system:String x:Key="#CreationHeader#">创建时间</system:String>
     <system:String x:Key="#LastWriteHeader#">修改时间</system:String>
+    <system:String x:Key="#ShowJobWindow#">选择作业...</system:String>
+    <system:String x:Key="#IdHeader#">ID</system:String>
+    <system:String x:Key="#NameHeader#">名称</system:String>
+    <system:String x:Key="#TypeHeader#">类型</system:String>
+    <system:String x:Key="#ExpireHeader#">过期日期</system:String>
+    <system:String x:Key="#ClassNameHeader#">班级名称</system:String>
 
 </ResourceDictionary>

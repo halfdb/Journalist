@@ -1,0 +1,29 @@
+﻿<Window x:Class="Journalist.JobWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Journalist"
+        mc:Ignorable="d"
+        Title="Jobs" Height="400" Width="600">
+    <Grid>
+        <DockPanel>
+            <Grid DockPanel.Dock="Bottom">
+                <Button x:Name="OkButton" HorizontalAlignment="Right" Width="80" Margin="0, 0, 30, 10" Content="OK" Click="OkButton_Click"/>
+            </Grid>
+            <ListView x:Name="JobList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="30, 10">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn x:Name="IdColumn" DisplayMemberBinding="{Binding Path=Id}" Width="30"/>
+                        <GridViewColumn x:Name="NameColumn" DisplayMemberBinding="{Binding Path=Name}" Width="100"/>
+                        <GridViewColumn x:Name="TypeColumn" DisplayMemberBinding="{Binding Path=Type}" Width="80"/>
+                        <GridViewColumn x:Name="CreationColumn" DisplayMemberBinding="{Binding Path=CreationTime}" Width="140"/>
+                        <GridViewColumn x:Name="ExpireColumn" DisplayMemberBinding="{Binding Path=Expire}" Width="80"/>
+                        <GridViewColumn x:Name="ClassNameColumn" DisplayMemberBinding="{Binding Path=ClassName}" Width="80"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
+
+    </Grid>
+</Window>

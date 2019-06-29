@@ -117,6 +117,7 @@ namespace Journalist
             PhoneLabel.Text = TryResourceString("#PhoneLabel#");
             PasswordLabel.Text = TryResourceString("#PasswordLabel#");
             LoginButton.Content = TryResourceString("#LoginButton#");
+            SelectJobButton.Content = TryResourceString("#SelectButton#");
             BrowseButton.Content = TryResourceString("#BrowseButton#");
 
             FileNameColumn.Header = TryResourceString("#FileNameHeader#");

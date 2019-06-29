@@ -79,17 +79,24 @@ namespace Journalist
         public class Job
         {
             [DataMember(Name = "id")]
-            public int Id;
+            private int id;
             [DataMember(Name = "name")]
-            public string Name;
+            private string name;
             [DataMember(Name = "type")]
-            public string Type;
+            private string type;
             [DataMember(Name = "createDateTime")]
-            public string CreationTime;
+            private string creationTime;
             [DataMember(Name = "expire")]
-            public int Expire;
+            private int expire;
             [DataMember(Name = "className")]
-            public string Classname;
+            private string className;
+
+            public int Id { get => id; set => id = value; }
+            public string Name { get => name; set => name = value; }
+            public string Type { get => type; set => type = value; }
+            public string CreationTime { get => creationTime; set => creationTime = value; }
+            public int Expire { get => expire; set => expire = value; }
+            public string ClassName { get => className; set => className = value; }
 
             public override string ToString() => Name;
         }

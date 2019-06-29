@@ -82,7 +82,11 @@ namespace Journalist
             var contextMenu = new ContextMenu();
             contextMenu.MenuItems.Add(new MenuItem(
                 TryResourceString("#ShowWindow#"),
-                (object sender, EventArgs e) => { Show(); }
+                (object sender, EventArgs e) => { Activate(); }
+                ));
+            contextMenu.MenuItems.Add(new MenuItem(
+                TryResourceString("#ShowJobWindow#"),
+                (object sender, EventArgs e) => { OpenJobWindow(); }
                 ));
             contextMenu.MenuItems.Add(new MenuItem(
                 TryResourceString("#Exit#"),
@@ -122,6 +126,10 @@ namespace Journalist
                 Hide();
                 notifyIcon.ShowBalloonTip(ballonTimeout);
             }
+            else
+            {
+                CurrentJobWindow?.Close();
+            }
             base.OnClosing(e);
         }
 
@@ -155,25 +163,65 @@ namespace Journalist
             }
         }
 
+        private void SetSelectedJob(Site.Job job)
+        {
+            if (client != null)
+            {
+                client.SelectedJobId = job?.Id;
+            }
+            Properties.Settings.Default.SelectedJobId = job?.Id ?? -1;
+            Properties.Settings.Default.Save();
+        }
+
         private void JobCombo_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (JobCombo.SelectedIndex > 0)
+            // item 0 is placeholder
+            var job = JobCombo.SelectedItem as Site.Job;
+            SetSelectedJob(job);
+        }
+
+        protected JobWindow CurrentJobWindow = null;
+        protected void OpenJobWindow()
+        {
+            void callback(Site.Job job)
             {
-                var job = (Site.Job) JobCombo.SelectedItem;
-                if (client != null)
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    client.SelectedJobId = job.Id;
-                }
-                Properties.Settings.Default.SelectedJobId = job.Id;
-                Properties.Settings.Default.Save();
+                    var idx = JobCombo.Items.IndexOf(job);
+                    if (idx == -1)
+                    {
+                        idx = 0;
+                    }
+                    JobCombo.SelectedIndex = idx;
+                }));
             }
-            else
+
+            void closingCallback()
             {
-                if (client != null)
-                {
-                    client.SelectedJobId = null;
-                }
+                CurrentJobWindow = null;
             }
+
+            if (CurrentJobWindow == null)
+            {
+                // item 0 is placeholder
+                CurrentJobWindow = new JobWindow(client.Jobs, JobCombo.SelectedIndex - 1, callback, closingCallback)
+                {
+                    Title = TryResourceString("#JobTitle#")
+                };
+                CurrentJobWindow.IdColumn.Header = TryResourceString("#IdHeader#");
+                CurrentJobWindow.NameColumn.Header = TryResourceString("#NameHeader#");
+                CurrentJobWindow.TypeColumn.Header = TryResourceString("#TypeHeader#");
+                CurrentJobWindow.CreationColumn.Header = TryResourceString("#CreationHeader#");
+                CurrentJobWindow.ExpireColumn.Header = TryResourceString("#ExpireHeader#");
+                CurrentJobWindow.ClassNameColumn.Header = TryResourceString("#ClassNameHeader#");
+                CurrentJobWindow.Show();
+            }
+            CurrentJobWindow?.Activate();
+        }
+
+        private void SelectJobButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenJobWindow();
         }
     }
 }

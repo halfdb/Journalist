@@ -4,7 +4,7 @@
 
     <system:String x:Key="#AppName#">Journalist</system:String>
     <system:String x:Key="#RunningBackground#">Running in the background</system:String>
-    <system:String x:Key="#ShowWindow#">Show the window</system:String>
+    <system:String x:Key="#ShowWindow#">Show the window...</system:String>
     <system:String x:Key="#Exit#">Exit</system:String>
     <system:String x:Key="#FileFullTip#">Too many files to upload. Maybe exclude some certain paths?</system:String>
     <system:String x:Key="#NotSelected#">(Not selected)</system:String>
@@ -20,10 +20,17 @@
     <system:String x:Key="#PhoneLabel#">Phone No.</system:String>
     <system:String x:Key="#PasswordLabel#">Password</system:String>
     <system:String x:Key="#LoginButton#">Login</system:String>
+    <system:String x:Key="#SelectButton#">Select...</system:String>
     <system:String x:Key="#BrowseButton#">Browse...</system:String>
     <system:String x:Key="#FileNameHeader#">File Name</system:String>
     <system:String x:Key="#LengthHeader#">Size</system:String>
     <system:String x:Key="#CreationHeader#">Creation Time</system:String>
     <system:String x:Key="#LastWriteHeader#">Last Write Time</system:String>
+    <system:String x:Key="#ShowJobWindow#">Select Job...</system:String>
+    <system:String x:Key="#IdHeader#">ID</system:String>
+    <system:String x:Key="#NameHeader#">Name</system:String>
+    <system:String x:Key="#TypeHeader#">Type</system:String>
+    <system:String x:Key="#ExpireHeader#">Expire in</system:String>
+    <system:String x:Key="#ClassNameHeader#">Class Name</system:String>
 
 </ResourceDictionary>

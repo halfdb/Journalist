@@ -72,8 +72,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="JobWindow.xaml.cs">
+      <DependentUpon>JobWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindowBusiness.cs" />
     <Compile Include="Site.cs" />
+    <Page Include="JobWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
