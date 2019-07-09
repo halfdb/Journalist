@@ -43,6 +43,7 @@
     <system:String x:Key="#OkButton#">OK</system:String>
     <system:String x:Key="#AddTargetFilterTitle#">Add a target filter</system:String>
     <system:String x:Key="#FilterTitle#">Filter</system:String>
+    <system:String x:Key="#AddPackFilterTitle#">Add a pack filter</system:String>
     <system:String x:Key="#TitleTitle#">Title</system:String>
 
 </ResourceDictionary>

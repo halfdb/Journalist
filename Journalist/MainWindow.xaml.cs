@@ -128,7 +128,14 @@ namespace Journalist
             }
             else
             {
-                CurrentJobWindow?.Close();
+                foreach (var window in App.Current.Windows)
+                {
+                    if (window == this)
+                    {
+                        continue;
+                    }
+                    (window as Window)?.Close();
+                }
             }
             base.OnClosing(e);
         }

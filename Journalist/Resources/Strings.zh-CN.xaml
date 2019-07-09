@@ -43,6 +43,7 @@
     <system:String x:Key="#OkButton#">确定</system:String>
     <system:String x:Key="#AddTargetFilterTitle#">添加目标筛选</system:String>
     <system:String x:Key="#FilterTitle#">筛选</system:String>
+    <system:String x:Key="#AddPackFilterTitle#">添加打包筛选</system:String>
     <system:String x:Key="#TitleTitle#">标题</system:String>
 
 </ResourceDictionary>
