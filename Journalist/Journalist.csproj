@@ -72,11 +72,28 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddPackFilterWindow.xaml.cs">
+      <DependentUpon>AddPackFilterWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AddTargetFilterWindow.xaml.cs">
+      <DependentUpon>AddTargetFilterWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="JobWindow.xaml.cs">
       <DependentUpon>JobWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindowBusiness.cs" />
+    <Compile Include="SettingWindow.xaml.cs">
+      <DependentUpon>SettingWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Site.cs" />
+    <Page Include="AddPackFilterWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AddTargetFilterWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="JobWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -99,6 +116,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\Strings.en-US.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

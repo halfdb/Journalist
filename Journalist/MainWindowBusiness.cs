@@ -17,6 +17,7 @@ namespace Journalist
         protected StringCollection targetFilters;
         protected int targetFilterIndex;
         protected string watchingPath;
+        protected StringCollection excludedPaths;
         private Packer packer;
 
         public bool PackerReady { get => packer != null; }
@@ -106,6 +107,7 @@ namespace Journalist
             {
                 watchingPath = TryResourceString("#NotSelected#");
             }
+            excludedPaths = Properties.Settings.Default.ExcludedPaths ?? new StringCollection();
 
             JobCombo.Items.Add(TryResourceString("#NotSelected#"));
             DirectoryText.Text = watchingPath;
@@ -119,6 +121,7 @@ namespace Journalist
             LoginButton.Content = TryResourceString("#LoginButton#");
             SelectJobButton.Content = TryResourceString("#SelectButton#");
             BrowseButton.Content = TryResourceString("#BrowseButton#");
+            SettingButton.Content = TryResourceString("#SettingButton#");
 
             FileNameColumn.Header = TryResourceString("#FileNameHeader#");
             LengthColumn.Header = TryResourceString("#LengthHeader#");

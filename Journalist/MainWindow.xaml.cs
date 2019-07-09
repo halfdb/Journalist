@@ -55,7 +55,7 @@ namespace Journalist
             }
         }
 
-        private string TryResourceString(string key)
+        internal string TryResourceString(string key)
         {
             return TryFindResource(key) as string ?? key;
         }
@@ -222,6 +222,50 @@ namespace Journalist
         private void SelectJobButton_Click(object sender, RoutedEventArgs e)
         {
             OpenJobWindow();
+        }
+
+        private bool settingWindowOpened = false;
+        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (settingWindowOpened)
+            {
+                return;
+            }
+            settingWindowOpened = true;
+            var settingWindow = new SettingWindow()
+            {
+                TargetFilters = targetFilters,
+                TargetFilterIndex = targetFilterIndex,
+                PackFilters = packTitledFilters,
+                PackFilterIndex = packFilterIndex,
+                ExcludedPaths = excludedPaths
+            };
+            settingWindow.Closed += new EventHandler((object _s, EventArgs _e) =>
+            {
+                if (_s is SettingWindow window)
+                {
+                    if (window.Updated)
+                    {
+                        targetFilters = window.TargetFilters;
+                        targetFilterIndex = window.TargetFilterIndex;
+                        packTitledFilters = window.PackFilters;
+                        packFilterIndex = window.PackFilterIndex;
+                        excludedPaths = window.ExcludedPaths;
+
+                        Properties.Settings.Default.TargetFilters = targetFilters;
+                        Properties.Settings.Default.TargetFilterIndex = targetFilterIndex;
+                        Properties.Settings.Default.PackTitledFilters = packTitledFilters;
+                        Properties.Settings.Default.PackFilterIndex = packFilterIndex;
+                        Properties.Settings.Default.ExcludedPaths = excludedPaths;
+                        Properties.Settings.Default.Save();
+
+                        RestartWatching();
+                    }
+                    settingWindowOpened = false;
+                }
+            });
+            settingWindow.Show();
+            settingWindow.Activate();
         }
     }
 }

@@ -32,5 +32,17 @@
     <system:String x:Key="#TypeHeader#">类型</system:String>
     <system:String x:Key="#ExpireHeader#">过期日期</system:String>
     <system:String x:Key="#ClassNameHeader#">班级名称</system:String>
+    <system:String x:Key="#SettingButton#">设置...</system:String>
+    <system:String x:Key="#SettingsTitle#">设置</system:String>
+    <system:String x:Key="#TargetFilterSettingTitle#">目标筛选</system:String>
+    <system:String x:Key="#AddButton#">添加...</system:String>
+    <system:String x:Key="#PackFilterSettingTitle#">打包筛选</system:String>
+    <system:String x:Key="#ExcludedPathSettingTitle#">排除路径</system:String>
+    <system:String x:Key="#RemoveButton#">移除</system:String>
+    <system:String x:Key="#AboutButton#">关于...</system:String>
+    <system:String x:Key="#OkButton#">确定</system:String>
+    <system:String x:Key="#AddTargetFilterTitle#">添加目标筛选</system:String>
+    <system:String x:Key="#FilterTitle#">筛选</system:String>
+    <system:String x:Key="#TitleTitle#">标题</system:String>
 
 </ResourceDictionary>

@@ -147,5 +147,16 @@ namespace Journalist.Properties {
                 this["SelectedJobId"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection ExcludedPaths {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ExcludedPaths"]));
+            }
+            set {
+                this["ExcludedPaths"] = value;
+            }
+        }
     }
 }

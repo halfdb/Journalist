@@ -32,5 +32,17 @@
     <system:String x:Key="#TypeHeader#">Type</system:String>
     <system:String x:Key="#ExpireHeader#">Expire in</system:String>
     <system:String x:Key="#ClassNameHeader#">Class Name</system:String>
+    <system:String x:Key="#SettingButton#">Settings...</system:String>
+    <system:String x:Key="#SettingsTitle#">Settings</system:String>
+    <system:String x:Key="#TargetFilterSettingTitle#">Target Filter</system:String>
+    <system:String x:Key="#AddButton#">Add...</system:String>
+    <system:String x:Key="#PackFilterSettingTitle#">Pack Filter</system:String>
+    <system:String x:Key="#ExcludedPathSettingTitle#">Excluded Path</system:String>
+    <system:String x:Key="#RemoveButton#">Remove</system:String>
+    <system:String x:Key="#AboutButton#">About...</system:String>
+    <system:String x:Key="#OkButton#">OK</system:String>
+    <system:String x:Key="#AddTargetFilterTitle#">Add a target filter</system:String>
+    <system:String x:Key="#FilterTitle#">Filter</system:String>
+    <system:String x:Key="#TitleTitle#">Title</system:String>
 
 </ResourceDictionary>
