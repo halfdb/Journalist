@@ -192,5 +192,10 @@ namespace Journalist
         {
             Close();
         }
+
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            new AboutWindow().ShowDialog();
+        }
     }
 }

@@ -9,7 +9,7 @@
     <Grid>
         <DockPanel>
             <Grid DockPanel.Dock="Bottom">
-                <Button x:Name="AboutButton" Width="80" HorizontalAlignment="Left" Margin="50, 10, 50, 20">About...</Button>
+                <Button x:Name="AboutButton" Width="80" HorizontalAlignment="Left" Margin="50, 10, 50, 20" Click="AboutButton_Click">About...</Button>
                 <Button x:Name="OkButton" Width="80" HorizontalAlignment="Right" Margin="50, 10, 50, 20" Click="OkButton_Click">OK</Button>
             </Grid>
             <StackPanel DockPanel.Dock="Top">
