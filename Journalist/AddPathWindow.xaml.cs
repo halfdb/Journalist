@@ -1,5 +1,6 @@
 ﻿using System.Windows;
-using System.Windows.Forms;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Journalist
 {
@@ -23,7 +24,7 @@ namespace Journalist
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            using (var dialog = new FolderBrowserDialog())
+            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
             {
                 var result = dialog.ShowDialog();
                 if (result != System.Windows.Forms.DialogResult.OK)
@@ -37,6 +38,14 @@ namespace Journalist
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
+        }
+
+        private void PathText_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                OkButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }
         }
     }
 }

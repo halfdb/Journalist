@@ -14,14 +14,14 @@
                     <TextBlock x:Name="TitleTitle" FontSize="12" >Title</TextBlock>
                 </Border>
             </Grid>
-            <TextBox x:Name="TitleText" Margin="50, 0" FontSize="12">C/C++</TextBox>
+            <TextBox x:Name="TitleText" Margin="50, 0" FontSize="12" KeyUp="TextKeyUp">C/C++</TextBox>
             <Grid>
                 <Separator Margin="15, 0"/>
                 <Border Background="{Binding Background, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
                     <TextBlock x:Name="FilterTitle" FontSize="12" >Filter</TextBlock>
                 </Border>
             </Grid>
-            <TextBox x:Name="FilterText" Margin="50, 0" FontSize="12">*.c *.cpp *.h *.hpp</TextBox>
+            <TextBox x:Name="FilterText" Margin="50, 0" FontSize="12" KeyUp="TextKeyUp">*.c *.cpp *.h *.hpp</TextBox>
             <Button x:Name="OkButton" HorizontalAlignment="Center" Width="80" Margin="0, 20" Click="OkButton_Click">OK</Button>
         </StackPanel>
     </Grid>

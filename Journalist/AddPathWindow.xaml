@@ -16,7 +16,7 @@
             </Grid>
             <DockPanel>
                 <Button x:Name="BrowseButton" DockPanel.Dock="Right" Width="80" Margin="0, 0, 40, 0" Click="BrowseButton_Click">Browse...</Button>
-                <TextBox x:Name="PathText" Margin="40, 0, 20, 0" FontSize="12">.\source</TextBox>
+                <TextBox x:Name="PathText" Margin="40, 0, 20, 0" FontSize="12" KeyUp="PathText_KeyUp">.\source\ti\</TextBox>
             </DockPanel>
             <Button x:Name="OkButton" HorizontalAlignment="Center" Width="80" Margin="0, 20" Click="OkButton_Click">OK</Button>
         </StackPanel>

@@ -183,8 +183,10 @@ namespace Journalist
         private void JobCombo_SelectionChanged(object sender, RoutedEventArgs e)
         {
             // item 0 is placeholder
-            var job = JobCombo.SelectedItem as Site.Job;
-            SetSelectedJob(job);
+            if (JobCombo.SelectedItem is Site.Job job)
+            {
+                SetSelectedJob(job);
+            }
         }
 
         protected JobWindow CurrentJobWindow = null;
@@ -247,6 +249,7 @@ namespace Journalist
                 PackFilterIndex = packFilterIndex,
                 ExcludedPaths = excludedPaths
             };
+            settingWindow.Updated = false;
             settingWindow.Closed += new EventHandler((object _s, EventArgs _e) =>
             {
                 if (_s is SettingWindow window)

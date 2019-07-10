@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Journalist
 {
@@ -22,7 +13,7 @@ namespace Journalist
         {
             InitializeComponent();
 
-            if (Application.Current.MainWindow is MainWindow main)
+            if (App.Current.MainWindow is MainWindow main)
             {
                 Title = main.TryResourceString("#AddPackFilterTitle#");
                 TitleTitle.Text = main.TryResourceString("#TitleTitle#");
@@ -34,6 +25,14 @@ namespace Journalist
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
+        }
+
+        private void TextKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                OkButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }
         }
     }
 }

@@ -185,6 +185,7 @@ namespace Journalist
         private void RemoveExcludedPathButton_Click(object sender, RoutedEventArgs e)
         {
             excludedPaths.RemoveAt(ExcludedPathList.SelectedIndex);
+            Updated = true;
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
