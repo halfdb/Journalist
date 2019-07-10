@@ -75,6 +75,9 @@
     <Compile Include="AddPackFilterWindow.xaml.cs">
       <DependentUpon>AddPackFilterWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AddPathWindow.xaml.cs">
+      <DependentUpon>AddPathWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AddTargetFilterWindow.xaml.cs">
       <DependentUpon>AddTargetFilterWindow.xaml</DependentUpon>
     </Compile>
@@ -87,6 +90,10 @@
     </Compile>
     <Compile Include="Site.cs" />
     <Page Include="AddPackFilterWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AddPathWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

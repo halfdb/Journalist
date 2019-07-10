@@ -45,5 +45,7 @@
     <system:String x:Key="#FilterTitle#">筛选</system:String>
     <system:String x:Key="#AddPackFilterTitle#">添加打包筛选</system:String>
     <system:String x:Key="#TitleTitle#">标题</system:String>
+    <system:String x:Key="#AddPathTitle#">添加路径</system:String>
+    <system:String x:Key="#PathTitle#">路径</system:String>
 
 </ResourceDictionary>

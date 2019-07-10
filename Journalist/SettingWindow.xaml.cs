@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
@@ -19,21 +21,43 @@ namespace Journalist
     /// </summary>
     public sealed partial class SettingWindow : Window
     {
-        private StringCollection targetFilters;
+        private ObservableCollection<string> targetFilters;
         private int targetFilterIndex;
-        private StringCollection packFilters;
+        private ObservableCollection<string> packFilters;
         private int packFilterIndex;
-        private StringCollection excludedPaths;
+        private ObservableCollection<string> excludedPaths;
 
         public bool Updated = false;
 
+        private StringCollection StringCollectionFromCollection(Collection<string> collection)
+        {
+            var value = new StringCollection();
+            foreach (var item in collection)
+            {
+                value.Add(item);
+            }
+            return value;
+        }
+
+        private ObservableCollection<string> ObservableCollectionFromStringCollection(StringCollection collection)
+        {
+            var value = new ObservableCollection<string>();
+            foreach (var item in collection)
+            {
+                value.Add(item);
+            }
+            return value;
+        }
+
         public StringCollection TargetFilters
         {
-            get => targetFilters;
+            get => StringCollectionFromCollection(targetFilters);
+
             set
             {
-                targetFilters = value;
-                TargetFilterCombo.ItemsSource = value;
+                TargetFilterCombo.ItemsSource = null;
+                targetFilters = ObservableCollectionFromStringCollection(value);
+                TargetFilterCombo.ItemsSource = targetFilters;
             }
         }
 
@@ -49,11 +73,12 @@ namespace Journalist
 
         public StringCollection PackFilters
         {
-            get => packFilters;
+            get => StringCollectionFromCollection(packFilters);
             set
             {
-                packFilters = value;
-                PackFilterCombo.ItemsSource = value;
+                PackFilterCombo.ItemsSource = null;
+                packFilters = ObservableCollectionFromStringCollection(value);
+                PackFilterCombo.ItemsSource = packFilters;
             }
         }
 
@@ -69,11 +94,12 @@ namespace Journalist
 
         public StringCollection ExcludedPaths
         {
-            get => excludedPaths;
+            get => StringCollectionFromCollection(excludedPaths);
             set
             {
-                excludedPaths = value;
-                ExcludedPathList.ItemsSource = value;
+                ExcludedPathList.ItemsSource = null;
+                excludedPaths = ObservableCollectionFromStringCollection(value);
+                ExcludedPathList.ItemsSource = excludedPaths;
             }
         }
 
@@ -113,11 +139,21 @@ namespace Journalist
             Updated = true;
         }
 
-        private void AddPackFilterButton_Click(object sender, RoutedEventArgs e)
+        private delegate void AddedAction<T>(T dialog) where T : Window;
+        private void AddUsingWindow<T>(AddedAction<T> action) where T : Window
         {
-            var dialog = new AddPackFilterWindow();
+            var dialog = Activator.CreateInstance<T>();
             bool added = dialog.ShowDialog() ?? false;
             if (added)
+            {
+                action(dialog);
+                Updated = true;
+            }
+        }
+
+        private void AddPackFilterButton_Click(object sender, RoutedEventArgs e)
+        {
+            AddUsingWindow(new AddedAction<AddPackFilterWindow>((dialog) =>
             {
                 var titledFilter = new StringBuilder()
                     .Append(dialog.TitleText.Text)
@@ -125,23 +161,30 @@ namespace Journalist
                     .Append(dialog.FilterText.Text)
                     .ToString();
                 packFilters.Add(titledFilter);
-                PackFilterCombo.ItemsSource = packFilters;
                 PackFilterIndex = packFilters.Count - 1;
-                Updated = true;
-            }
+            }));
         }
 
         private void AddTargetFilterButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new AddTargetFilterWindow();
-            bool added = dialog.ShowDialog() ?? false;
-            if (added)
+            AddUsingWindow(new AddedAction<AddTargetFilterWindow>((dialog) =>
             {
                 targetFilters.Add(dialog.FilterText.Text);
-                TargetFilterCombo.ItemsSource = targetFilters;
                 TargetFilterIndex = targetFilters.Count - 1;
-                Updated = true;
-            }
+            }));
+        }
+
+        private void AddExcludedPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            AddUsingWindow(new AddedAction<AddPathWindow>((dialog) =>
+            {
+                excludedPaths.Add(dialog.PathText.Text);
+            }));
+        }
+
+        private void RemoveExcludedPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            excludedPaths.RemoveAt(ExcludedPathList.SelectedIndex);
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
