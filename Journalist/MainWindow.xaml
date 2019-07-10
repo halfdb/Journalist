@@ -18,7 +18,7 @@
 
                         <Grid>
                             <Separator Margin="15, 0"/>
-                            <Border Background="White" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
                                 <TextBlock x:Name="JobTitle" FontSize="12" >Job</TextBlock>
                             </Border>
                         </Grid>
@@ -29,7 +29,7 @@
                         </DockPanel>
                         <Grid>
                             <Separator Margin="15, 0"/>
-                            <Border Background="White" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
                                 <TextBlock x:Name="DirectoryTitle" FontSize="12" >Watching Directory</TextBlock>
                             </Border>
                         </Grid>
@@ -39,7 +39,7 @@
                         </DockPanel>
                         <Grid>
                             <Separator Margin="15, 0"/>
-                            <Border Background="White" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
+                            <Border Background="{Binding Background, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
                                 <TextBlock x:Name="UploadTitle" FontSize="12" >Files to upload</TextBlock>
                             </Border>
                         </Grid>
@@ -71,11 +71,11 @@
                         <StackPanel Margin="20, 10">
                             <StackPanel HorizontalAlignment="Stretch">
                                 <DockPanel>
-                                    <TextBox x:Name="PhoneText" DockPanel.Dock="Right" Width="100" Margin="10, 5"></TextBox>
+                                    <TextBox x:Name="PhoneText" DockPanel.Dock="Right" Width="100" Margin="10, 5" KeyUp="LoginTextKeyUp"/>
                                     <TextBlock x:Name="PhoneLabel" DockPanel.Dock="Left" Margin="10, 5" FontSize="12">Phone No.</TextBlock>
                                 </DockPanel>
                                 <DockPanel>
-                                    <PasswordBox x:Name="PasswordText" DockPanel.Dock="Right" Width="100" Margin="10, 5"></PasswordBox>
+                                    <PasswordBox x:Name="PasswordText" DockPanel.Dock="Right" Width="100" Margin="10, 5"  KeyUp="LoginTextKeyUp"/>
                                     <TextBlock x:Name="PasswordLabel" DockPanel.Dock="Left" Margin="10, 5" FontSize="12">Password</TextBlock>
                                 </DockPanel>
                             </StackPanel>

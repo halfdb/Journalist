@@ -5,7 +5,7 @@ using System.Windows.Input;
 namespace Journalist
 {
     /// <summary>
-    /// Interaction logic for AddPackFilter.xaml
+    /// Interaction logic for AddPackFilterWindow.xaml
     /// </summary>
     public partial class AddPackFilterWindow : Window
     {

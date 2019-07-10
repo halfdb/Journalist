@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace Journalist
 {
@@ -52,6 +53,14 @@ namespace Journalist
             {
                 Cover.IsEnabled = true;
                 LoginProgress.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void LoginTextKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                LoginButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
             }
         }
 
