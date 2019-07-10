@@ -16,6 +16,7 @@ namespace Journalist
         protected string WatchingPath;
         protected string targetFileNameFilter;
         protected IList<string> packFileNameFilters;
+        protected IList<string> excludedPaths;
 
         private const int packItemLimit = 100;
 
@@ -49,6 +50,8 @@ namespace Journalist
 
             // All included files will be uploaded.
             public IList<string> PackFileNameFilters { get; set; }
+
+            public IList<string> ExcludedPaths { get; set; }
         }
 
         public Packer(Config config)
@@ -62,6 +65,7 @@ namespace Journalist
 
             WatchingPath = config.Path ?? @".\";
             packFileNameFilters = config.PackFileNameFilters ?? new List<string>();
+            excludedPaths = config.ExcludedPaths ?? new List<string>();
 
             if (watcher != null)
             {
@@ -94,11 +98,23 @@ namespace Journalist
                 var filters = packFileNameFilters.ToList();
                 filters.Add(targetFileNameFilter);
 
+                var excludedFullName = new List<string>(excludedPaths.Count);
+                foreach (var item in excludedPaths)
+                {
+                    try
+                    {
+                        excludedFullName.Add(new DirectoryInfo(item).FullName);
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        continue;
+                    }
+                }
+
                 if (UpdatingPackFiles)
                 {
                     return;
                 }
-
                 UpdatingPackFiles = true;
                 lock (PackFileNames)
                 {
@@ -112,7 +128,10 @@ namespace Journalist
 
                         foreach (var sub in Directory.GetDirectories(dir))
                         {
-                            queue.Enqueue(sub);
+                            if (!excludedFullName.Contains(new DirectoryInfo(sub).FullName))
+                            {
+                                queue.Enqueue(sub);
+                            }
                         }
 
                         foreach (var pattern in filters)
@@ -188,12 +207,58 @@ namespace Journalist
             filterList[0] = targetFileNameFilter;
             packFileNameFilters.CopyTo(filterList, 1);
             string filterListString = string.Join(" ", filterList);
+
+            string excludingParamString = "";
+            if (excludedPaths.Count > 0)
+            {
+                var excludingParams = new List<string>(excludedPaths.Count);
+                foreach (var item in excludedPaths)
+                {
+                    try
+                    {
+                        var relativePath = GetRelativePath(
+                            new DirectoryInfo(WatchingPath).FullName,
+                            new DirectoryInfo(item).FullName);
+                        var relativeFilter = Path.Combine(relativePath, "*");
+                        if (relativeFilter.StartsWith(@".\"))
+                        {
+                            // remove ".\" so 7z recognizes
+                            relativeFilter = relativeFilter.Substring(2);
+                        }
+                        if (relativeFilter.StartsWith("@.."))
+                        {
+                            // ignore parent directory
+                            continue;
+                        }
+                        excludingParams.Add("-xr0!" + relativeFilter);
+                    }
+                    catch (Exception e)
+                    {
+                        if (e is ArgumentException || e is FileNotFoundException)
+                        {
+                            Console.WriteLine($"Info: Relative path not found for {item}");
+                            continue;
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+                excludingParamString = string.Join(" ", excludingParams.ToArray());
+            }
+
+            var arg = $"a {zipFileName} {filterListString} -r0 {excludingParamString}";
+#if DEBUG
+            Console.WriteLine($"Info: arg to 7z: {arg}");
+#endif
+
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = zipExe,
                 CreateNoWindow = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
-                Arguments = $"a {zipFileName} {filterListString} -r",
+                Arguments = arg,
                 UseShellExecute = false,
                 WorkingDirectory = packingDir,
                 RedirectStandardOutput = true

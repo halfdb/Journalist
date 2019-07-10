@@ -255,11 +255,17 @@ namespace Journalist
                 .Split('|')  // -> ["title", "filters"]
                 [1]  // -> "filters"
                 .Split(' ');  // -> ["filter1", "filter2"...]
+            var excludedPathList = new List<string>();
+            foreach (var item in excludedPaths)
+            {
+                excludedPathList.Add(item);
+            }
             var config = new Packer.Config()
             {
                 Path = watchingPath,
                 PackFileNameFilters = packFilters,
                 TargetFileNameFilter = targetFilters[targetFilterIndex],
+                ExcludedPaths = excludedPathList,
             };
 
             try
