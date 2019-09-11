@@ -94,7 +94,6 @@ namespace Journalist
             CurrentState = State.NotLoggedIn;
         }
 
-        private const string failureCase = "failure";
         protected void WebClientHandler(object sender, AsyncCompletedEventArgs eventArgs)
         {
             void resetState()
