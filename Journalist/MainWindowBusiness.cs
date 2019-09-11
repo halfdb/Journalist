@@ -122,6 +122,7 @@ namespace Journalist
             SelectJobButton.Content = TryResourceString("#SelectButton#");
             BrowseButton.Content = TryResourceString("#BrowseButton#");
             SettingButton.Content = TryResourceString("#SettingButton#");
+            LogoutButton.Content = TryResourceString("#LogoutButton#");
 
             FileNameColumn.Header = TryResourceString("#FileNameHeader#");
             LengthColumn.Header = TryResourceString("#LengthHeader#");
@@ -132,7 +133,7 @@ namespace Journalist
 
             PhoneText.Text = SavedPhone;
             PasswordText.Password = SavedPassword;
-            LoginButton_Click(this, null);
+            Login(PhoneText.Text, PasswordText.Password);
         }
 
         private void InitializeEntropy()
@@ -152,6 +153,30 @@ namespace Journalist
             }
         }
 
+        private void Login(string phone, string password)
+        {
+            if (phone.Length != 0 && password.Length != 0)
+            {
+                client.LoginAsync(phone, password);
+            }
+        }
+
+        private void Logout()
+        {
+            var oldClient = client;
+            client = new Client(new Site());
+            client.AccessCompleted += Client_AccessCompleted;
+            oldClient.AccessCompleted -= Client_AccessCompleted;
+            oldClient.Dispose();
+            Uploading = false;
+#if !DEBUG
+            if (File.Exists(ZipFileName))
+            {
+                File.Delete(ZipFileName);
+            }
+#endif
+        }
+
         private void Client_AccessCompleted(object sender, Client.AccessEventArgs e)
         {
             switch (e.EventType)
@@ -162,9 +187,7 @@ namespace Journalist
                     RestartWatching();
                     break;
                 case Client.EventType.LoginFail:
-                    Cover.IsEnabled = true;
-                    LoginProgress.Visibility = Visibility.Hidden;
-
+                    HoldLoginCover(false);
                     notifyIcon.ShowBalloonTip(
                         ballonTimeout,
                         AppName,
@@ -204,6 +227,7 @@ namespace Journalist
 #endif
                     break;
                 case Client.EventType.Fail:
+                    Uploading = false;  // if failed to login, it is false already
                     notifyIcon.ShowBalloonTip(
                         ballonTimeout,
                         AppName,
@@ -220,7 +244,6 @@ namespace Journalist
         {
             bool checkPath()
             {
-                bool result;
                 try
                 {
                     watchingPath = Path.GetFullPath(watchingPath);
@@ -233,22 +256,21 @@ namespace Journalist
                         || e is NotSupportedException
                         || e is PathTooLongException)
                     {
-                        result = false;
+                        return false;
                     }
                     else
                     {
                         throw;
                     }
                 }
-                result = Directory.Exists(watchingPath);
-                if (!result)
-                {
-                    watchingPath = TryResourceString("#NotSelected#");
-                }
-                return result;
+                return Directory.Exists(watchingPath);
             }
 
-            if (!checkPath()) { return; }
+            if (!checkPath())
+            {
+                watchingPath = TryResourceString("#NotSelected#");
+                return;
+            }
 
             var packFilters = packTitledFilters
                 [packFilterIndex]  // -> "title|filters"
@@ -296,7 +318,10 @@ namespace Journalist
         protected bool Uploading = false;
         private void PackUpdateFinished()
         {
-
+            if (!PackerReady)
+            {
+                return;
+            }
             if (FullWarning)
             {
                 notifyIcon.ShowBalloonTip(

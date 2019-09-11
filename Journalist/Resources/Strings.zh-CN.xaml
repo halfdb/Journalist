@@ -47,5 +47,6 @@
     <system:String x:Key="#TitleTitle#">标题</system:String>
     <system:String x:Key="#AddPathTitle#">添加路径</system:String>
     <system:String x:Key="#PathTitle#">路径</system:String>
+    <system:String x:Key="#LogoutButton#">退出登录</system:String>
 
 </ResourceDictionary>

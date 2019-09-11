@@ -32,28 +32,40 @@ namespace Journalist
             }
         }
 
+        protected void EnableLoginInput(bool enable = true)
+        {
+            PhoneText.IsEnabled = enable;
+            PasswordText.IsEnabled = enable;
+        }
+
+        protected void HoldLoginCover(bool hold = true)
+        {
+            Cover.IsEnabled = !hold;
+            LoginProgress.Visibility = hold ? Visibility.Visible : Visibility.Hidden;
+        }
+
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            Cover.IsEnabled = false;
-            LoginProgress.Visibility = Visibility.Visible;
-
+            EnableLoginInput(false);
             var phone = PhoneText.Text;
             var password = PasswordText.Password;
             if (phone.Length != 0 && password.Length != 0)
             {
-                if (sender != this)
-                {
-                    SavedPhone = phone;
-                    SavedPassword = password;
-                }
+                HoldLoginCover();
+                Login(phone, password);
+                SavedPhone = phone;
+                SavedPassword = password;
+            }
+            EnableLoginInput();
+        }
 
-                client.LoginAsync(phone, password);
-            }
-            else
-            {
-                Cover.IsEnabled = true;
-                LoginProgress.Visibility = Visibility.Hidden;
-            }
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowLogin();
+            HoldLoginCover(false);
+            EnableLoginInput();
+            JobCombo.Items.Clear();
+            Logout();
         }
 
         private void LoginTextKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
@@ -189,14 +201,9 @@ namespace Journalist
             Properties.Settings.Default.Save();
         }
 
-        private void JobCombo_SelectionChanged(object sender, RoutedEventArgs e)
-        {
+        private void JobCombo_SelectionChanged(object sender, RoutedEventArgs e) =>
             // item 0 is placeholder
-            if (JobCombo.SelectedItem is Site.Job job)
-            {
-                SetSelectedJob(job);
-            }
-        }
+            SetSelectedJob(JobCombo.SelectedItem as Site.Job);
 
         protected JobWindow CurrentJobWindow = null;
         protected void OpenJobWindow()

@@ -15,7 +15,7 @@
             <StackPanel DockPanel.Dock="Top">
                 <Grid>
                     <Separator Margin="15, 0"/>
-                    <Border Background="White" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
+                    <Border Background="{Binding Background, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
                         <TextBlock x:Name="TargetFilterSettingTitle" FontSize="12" >Target Filter</TextBlock>
                     </Border>
                 </Grid>
@@ -27,7 +27,7 @@
 
                 <Grid>
                     <Separator Margin="15, 0"/>
-                    <Border Background="White" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
+                    <Border Background="{Binding Background, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
                         <TextBlock x:Name="PackFilterSettingTitle" FontSize="12" >Pack Filter</TextBlock>
                     </Border>
                 </Grid>
@@ -40,7 +40,7 @@
             <DockPanel>
                 <Grid DockPanel.Dock="Top">
                     <Separator Margin="15, 0"/>
-                    <Border Background="White" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
+                    <Border Background="{Binding Background, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Padding="2, 10" Margin="50, 0, 0, 0" HorizontalAlignment="Left">
                         <TextBlock x:Name="ExcludedPathSettingTitle" FontSize="12" >Excluded Path</TextBlock>
                     </Border>
                 </Grid>

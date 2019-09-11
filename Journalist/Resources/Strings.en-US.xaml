@@ -47,5 +47,6 @@
     <system:String x:Key="#TitleTitle#">Title</system:String>
     <system:String x:Key="#AddPathTitle#">Add a path</system:String>
     <system:String x:Key="#PathTitle#">Path</system:String>
+    <system:String x:Key="#LogoutButton#">Logout</system:String>
 
 </ResourceDictionary>
